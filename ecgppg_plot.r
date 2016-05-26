@@ -24,17 +24,19 @@ extract_signal <- function(row) {
 # fecg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/2016_05_20-09_48_17_ECG2.csv")
 # ecg <- read.csv(text = fecg)
 ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG2.csv",header = TRUE, sep = ",", quote="", dec=".")#,comment.char="")
-ecg[,1] <- strptime(ecg[,1], "%d/%m/%Y %H:%M:%OS")
-ecg[1500:2000,]
-plot(ecg, type = "l", col = "red")
+ecg$TIME <- strptime(ecg[,1], "%d/%m/%Y %H:%M:%OS")
+ecgT = ecg[1500:2000,]
+ecgT
+plot(ecg$TIME, ecg$ECG, type = "l", col = "red")
 
 ## PGG
 # fppg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/TR20160520101713_1002_cut2132ppg.csv")
 # ppg <- read.csv(text = fppg)
-ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_cut2132ppg.csv",header = TRUE, sep = ",")#,comment.char="")
-ppg[,1] <- strptime(ppg[,1], "%Y-%m-%d %H:%M:%OS") # 2016-05-20 09:48:09.00
+ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_cut40000ppg.csv", colClasses=c("character", "character", "character"))
+#ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002.csv", colClasses=c("character", "character", "character"))
+ppg$TIME <- strptime(ppg[,1], "%Y-%m-%d %H:%M:%OS") # 2016-05-20 09:48:09.00
+ppgT = ppg[1500:2000,]
+ppgT
 ppg = do.call(rbind.data.frame,  apply(ppg, 1, extract_signal))
-#ppg[1500:2000,]
-#ppg
-plot(ppg$VALUE ~ ppg$TIMESTAMP, type = "l", col = "blue")
+plot(ppg$TIME, ppg$VALUE, type = "l")
 
