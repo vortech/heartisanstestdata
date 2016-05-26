@@ -85,3 +85,11 @@ plot(ecg$TIME, ecg$ECG, type = "l", col = "red", main = paste(c("ECG: ", nrow(ec
 # # Only keep index values from sample data
 # Z <- z[index(zs),]
 # plot(Z)
+
+# irregular time points at which data was sampled
+t <- c(5,10,15,25,30,40,50)
+# measurements 
+y <- c(4.3,1.2,5.4,7.6,3.2,1.2,3.7)
+f <- approxfun(t,y)
+# get interpolated values for time points 5, 20, 35, 50
+f(seq(from=5,to=50,by=15))
