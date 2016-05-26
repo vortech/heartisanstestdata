@@ -28,8 +28,8 @@ extract_signal <- function(row) {
 #ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002.csv", colClasses=c("character", "character", "character"))
 #ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_cut2132ppg.csv", colClasses=c("character", "character"))
 #ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_cut40000ppg.csv", colClasses=c("character", "character"))
-ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_PPG20000.csv",header = TRUE, sep = ",")
-# ppgT = ppg[1500:2000,]
+ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002.csv",header = TRUE, sep = ",")#ORI
+nrow(ppg)
 ppg[1:1,]
 ppg$TIME[1:1]
 ppg = do.call(rbind.data.frame,  apply(ppg, 1, extract_signal))
@@ -42,8 +42,10 @@ par(new=TRUE)
 
 ## ECG
 # fecg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/2016_05_20-09_48_17_ECG2.csv")
-# ecg <- read.csv(text = fecg)
-ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG20000.csv",header = TRUE, sep = ",", quote="", dec=".")#,comment.char="")
+# ecg <- read.csv(text = fecg) 
+#ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG20000.csv",header = TRUE, sep = ",", quote="", dec=".")#,comment.char="")
+ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG.csv",header = TRUE, sep = ",", quote="", dec=".")#ORI
+nrow(ecg)
 ecg$TIME <- strptime(ecg[,1], "%d/%m/%Y %H:%M:%OS")
 ecgT = ecg[1500:2000,]
 plot(ecg$TIME, ecg$ECG, type = "l", col = "red", main = paste(c("ECG: ", nrow(ecg)), collapse = " "))
