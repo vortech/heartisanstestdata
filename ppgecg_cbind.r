@@ -64,6 +64,10 @@ t <- ppg[, c("TIME","VALUE")]
 t
 write.csv(t, "ppgf.csv", row.name=TRUE)
 
+######
+###### same columns names for both csv
+######
+
 #u <- df[, c("x","y")]
 #u
 write.csv(ecg, "ecgf.csv", row.name=TRUE)
