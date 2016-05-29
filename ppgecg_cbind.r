@@ -76,25 +76,3 @@ z2<-read.zoo(file="ecgf.csv",sep=",",header=TRUE,tz="",format="%d/%m/%Y %H:%M:%O
 #Plot graph
 plot.zoo(cbind(z1,z2), plot.type="single", col=c("red","blue"))
 
-
-################£
-################£
-
-#Install package 'zoo'
-#Go to 'Packages' in toolbar and select 'Install package(s)'. Select any CRAN mirror and install 'zoo' package.
-
-#Load package 'zoo'
-library('zoo')
-
-#Go to directory in which files are stored
-#Go to 'File' in toolbar and select 'Change dir'. Select the directory in which you have kept the files.
-
-#Read CSV data as time-series data
-z1<-read.zoo(file="a.csv",sep=",",header=TRUE,tz="",format="%m/%d/%Y")
-z2<-read.zoo(file="b.csv",sep=",",header=TRUE,tz="",format="%m/%d/%Y")
-
-#In case you do not have headers, specify header=FALSE.
-#In case your date format is in D/M/Y, change the format specification accordingly.
-
-#Plot graph
-plot.zoo(cbind(z1,z2), plot.type="single", col=c("red","blue"))
