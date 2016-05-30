@@ -1,4 +1,5 @@
 library(RCurl)
+options(digits.secs = 3);
 
 ## PPG
 make_sign <- function(x, bytes){
@@ -23,11 +24,11 @@ extract_signal <- function(row) {
   return (row)
 }
 
-fppg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/TR20160520101713_1002_PPG20000.csv")
-ppg <- read.csv(text = fppg)
+#fppg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/TR20160520101713_1002_PPG20000.csv")
+#ppg <- read.csv(text = fppg)
+ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_PPG5000.csv", colClasses=c("character", "character"))
 #ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002.csv", colClasses=c("character", "character", "character"))
 #ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_cut2132ppg.csv", colClasses=c("character", "character"))
-#ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002_cut40000ppg.csv", colClasses=c("character", "character"))
 #ppg <- read.csv("D:\\Dev\\R\\test\\TR20160520101713_1002.csv",header = TRUE, sep = ",")#ORI
 nrow(ppg)
 ppg[1:1,]
@@ -36,47 +37,52 @@ ppg = do.call(rbind.data.frame,  apply(ppg, 1, extract_signal))
 ppg$TIME <- strptime(ppg[,1], "%Y-%m-%d %H:%M:%OS") # 2016-05-20 09:48:09.00
 plot(ppg$TIME, ppg$VALUE, type = "l", col = "blue", main = paste(c("PPG: ", nrow(ppg)), collapse = " "))
 par(new=TRUE)
-# ACC
+# +ACC_XY
 plot(ppg$TIME, ppg$ACC_X_Y, type = "l", col = "green", main = paste(c("PPG: ", nrow(ppg)), collapse = " "))
 par(new=TRUE)
 
 ## ECG
-fecg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/2016_05_20-09_48_17_ECG20000.csv")
-ecg <- read.csv(text = fecg) 
-#ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG20000.csv",header = TRUE, sep = ",", quote="", dec=".")#,comment.char="")
+#fecg <- getURL("https://raw.githubusercontent.com/vortech/heartisanstestdata/master/2016_05_20-09_48_17_ECG20000.csv")
+#ecg <- read.csv(text = fecg) 
+ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG5000.csv",header = TRUE, sep = ",", quote="", dec=".")#,comment.char="")
 #ecg <- read.csv("D:\\Dev\\R\\test\\2016_05_20-09_48_17_ECG.csv",header = TRUE, sep = ",", quote="", dec=".")#ORI
 nrow(ecg)
 ecg$TIME <- strptime(ecg[,1], "%d/%m/%Y %H:%M:%OS")
+
+## Problem with date conversion, rounding milliseconds: 
+## ecg$Timestamp[1]; strptime(ecg$Timestamp[1], "%d/%m/%Y %H:%M:%OS")
+## need to use the option: options(digits.secs = 3);
+
 ecgT = ecg[1500:2000,]
 plot(ecg$TIME, ecg$ECG, type = "l", col = "red", main = paste(c("ECG: ", nrow(ecg)), collapse = " "))
 
 
-
-
-
 ################£
 ################£
 
-
-#df <- data.frame(x=1:5, y=2:6, z=3:7, u=4:8)
-#df
+local_path = "D:\\Dev\\R\\test\\"
 t <- ppg[, c("TIME","VALUE")]
 t
-write.csv(t, "ppgf.csv", row.name=TRUE)
+pppg_o = paste(c(local_path, "ppg_out.csv"), collapse = "")
+#write.csv(t, pppg_o, row.name=TRUE)
+t <- write.table(ppg[, c("TIME","VALUE")],paste(c(local_path, 'ppg_out.csv'), collapse = ""),row.names=F,sep=",")
 
 ######
-###### same columns names for both csv
+###### same columns names for both csv ??
 ######
 
-#u <- df[, c("x","y")]
-#u
-write.csv(ecg, "ecgf.csv", row.name=TRUE)
+pecg_o = paste(c(local_path, "ecg_out.csv"), collapse = "")
+w <- ecg[, c("TIME","ECG")]
+w
+#write.csv(w, pecg_o, row.name=TRUE)
+w <- write.table(ecg[, c("TIME","ECG")],paste(c(local_path, 'ecg_out.csv'), collapse = ""),row.names=F,sep=",")
+
 
 library('zoo')
 #Read CSV data as time-series data
-z1<-read.zoo(file="ppgf.csv",sep=",",header=TRUE,tz="",format="%Y-%m-%d %H:%M:%OS")
-z2<-read.zoo(file="ecgf.csv",sep=",",header=TRUE,tz="",format="%d/%m/%Y %H:%M:%OS")
+
+z1<-read.zoo(file=pppg_o,sep=",",header=TRUE,tz= "",format="%Y-%m-%d %H:%M:%OS")
+z2<-read.zoo(file=pecg_o,sep=",",header=TRUE,tz= "",format="%Y-%m-%d %H:%M:%OS") # "%d/%m/%Y %H:%M:%OS"
 
 #Plot graph
 plot.zoo(cbind(z1,z2), plot.type="single", col=c("red","blue"))
-
