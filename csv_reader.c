@@ -130,12 +130,13 @@ int main(){
 
 			// value
 			if (ppg){
+				// search: read bytes to float in c
 				printf ("ON PPG MODE\n");
 				char bkslash;
 				int d, m, y, h, mi, ms;
 			    int s;
 			    char h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12; // trying to read sensor data
-			    sscanf(rowstr, "%c %d-%d-%d%d:%d:%d.%d %c %c,%c,%c,%c,%c,%c,%c,%c,%c,%c,%c,%c",&bkslash, &y, &m, &d, &h, &mi, &s, &ms, &bkslash,
+			    sscanf(rowstr, "%c %d-%d-%d%d:%d:%d.%d,%c%c,%c,%c,%c,%c,%c,%c,%c,%c,%c,%c,%c",&bkslash, &y, &m, &d, &h, &mi, &s, &ms, &bkslash,
 			    		&h1,&h2,&h3,&h4,&h5,&h6,&h7,&h8,&h9,&h10,&h11,&h12);
 
 				printf ("%s",h1);
