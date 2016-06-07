@@ -6,8 +6,9 @@
 //#pragma warning (disable:4996)
 
 #define COLS 2
-#define ROWS 3
+#define ROWS 300
 #define SEP ","
+_Bool ppg;
 
 void powerfWay(){
 //	http://stackoverflow.com/questions/18712774/parsing-integer-and-float-values-of-a-text-file-with-sscanf
@@ -27,13 +28,15 @@ void powerfWay(){
 void dateParse(char *date){
 	printf (">>date parser:\n");
 
-    //date = "20/05/2016 09:48:17.439";
-    int d, m, y, h, mi, ms;
+	char bkslash;
+	int d, m, y, h, mi, ms;
     int s;
-    //float s;
-
-    sscanf(date, "%d/%d/%d%d:%d:%d.%d", &d, &m, &y, &h, &mi, &s, &ms);
-    //sscanf(date, "%d/%d/%d %d:%d:%f4", &d, &m, &y, &h, &mi, &s);
+	if (ppg){// 2016-05-20 09:48:09.02
+		// clean date: remove \" at the beginning and the end. "\"2016-05-20 09:48:09.00\""
+	    sscanf(date, "%c %d-%d-%d%d:%d:%d.%d",&bkslash, &y, &m, &d, &h, &mi, &s, &ms);
+	}else{// "20/05/2016 09:48:17.439"
+	    sscanf(date, "%d/%d/%d%d:%d:%d.%d", &d, &m, &y, &h, &mi, &s, &ms);
+	}
 	printf ("%d\n", d);
 	printf ("%d\n", m);
 	printf ("%d\n", y);
@@ -42,7 +45,27 @@ void dateParse(char *date){
 	printf ("%d\n", s);
 	printf ("%d\n", ms);
 
-	// Convert into milliseconds Linux
+	// Convert into epoch milliseconds/UNIX timestamps
+	date2epoch(y, m, d, h, mi, s, ms);
+}
+
+void date2epoch(int y, int m, int d, int h, int mi, int s, int ms) {
+	// online check: http://www.epochconverter.com/
+	time_t t_of_day;
+	struct tm t;
+	t.tm_year = y - 1900;
+	t.tm_mon = m;           // Month, 0 - jan
+	t.tm_mday = d;          // Day of the month
+	t.tm_hour = h;
+	t.tm_min = mi;
+	t.tm_sec = s;
+	t.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown
+	t_of_day = mktime(&t);
+
+	double tt = (double)((long) t_of_day) + (ms * 0.01);
+
+	printf("seconds since the Epoch: %.2f\n", tt);
+
 }
 
 void parser(float array[][COLS], int _row, int _col, const char *_colstr){
@@ -56,11 +79,22 @@ void parser(float array[][COLS], int _row, int _col, const char *_colstr){
 	//printf(strcat(_colstr, "\n"));
 }
 
+/*	PPG
+  	 "TIMESTAMP","PAYLOAD"
+	"2016-05-20 09:48:09.00","00,63,DF,00,1F,70,00,05,FF,E3,FF,F2"
+	"2016-05-20 09:48:09.01","00,63,DF,00,1F,70,00,05,FF,E3,FF,F2"
+	"2016-05-20 09:48:09.02","00,21,52,00,1F,3D,FF,E7,FF,E7,00,06"*/
+
+/*	ECG
+	imestamp,ECG
+	20/05/2016 09:48:17.435,3422
+	20/05/2016 09:48:17.439,3413
+	20/05/2016 09:48:17.443,3403
+	20/05/2016 09:48:17.447,3392*/
+
 int main(){
-	//const char filename[] = "D:\\Dev\\HEARTISANS\\csv_reader\\input.txt";
-	const char filename[] = "D:\\Dev\\HEARTISANS\\2016_05_20-09_48_17_ECG2000.csv";
-	// 20/05/2016 09:48:17.435,3422
-	// 20/05/2016 09:48:17.439,3413
+	const char filename[]="D:\\Dev\\HEARTISANS\\TR20160520101713_1002_PPG2000.csv";ppg = 1;
+//	const char filename[]="D:\\Dev\\HEARTISANS\\2016_05_20-09_48_17_ECG2000.csv";ppg = 0;
 
 	FILE *f = fopen(filename, "r");
 	if (f){
@@ -90,8 +124,12 @@ int main(){
 			printf ("%s\n",timestamp);
 
 			// value
-			char* value = strtok(NULL, ",");
-			printf ("%s",value);
+			if (ppg){
+				printf ("ON PPG MODE\n");
+			}else{
+				char* value = strtok(NULL, ",");
+				printf ("%s",value);
+			}
 
 			// extract real data
 			dateParse(timestamp);
