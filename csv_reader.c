@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <time.h>
 //#pragma warning (disable:4996)
+#include <assert.h>
 
 #define COLS 2
 #define ROWS 300
@@ -25,7 +26,7 @@ void powerfWay(){
 //	fclose(fp);
 }
 
-void dateParse(char *date){
+void dataParse(char *date){
 	printf (">>date parser:\n");
 
 	char bkslash;
@@ -65,18 +66,21 @@ void date2epoch(int y, int m, int d, int h, int mi, int s, int ms) {
 	double tt = (double)((long) t_of_day) + (ms * 0.01);
 
 	printf("seconds since the Epoch: %.2f\n", tt);
-
 }
 
 void parser(float array[][COLS], int _row, int _col, const char *_colstr){
 	// get date
-	dateParse("20/05/2016 09:48:17.435"); // "Tue, 13 Dec 2011 16:08:21 GMT"
+	//dateParse("20/05/2016 09:48:17.435"); // "Tue, 13 Dec 2011 16:08:21 GMT"
 
 	// get value
 	array[_row][_col] = atof(_colstr);
 
 	printf("%s%.2f%s", _col?"":"\n", array[_row][_col], SEP);
 	//printf(strcat(_colstr, "\n"));
+}
+
+void parserPayload(){
+
 }
 
 /*	PPG
@@ -95,6 +99,7 @@ void parser(float array[][COLS], int _row, int _col, const char *_colstr){
 int main(){
 	const char filename[]="D:\\Dev\\HEARTISANS\\TR20160520101713_1002_PPG2000.csv";ppg = 1;
 //	const char filename[]="D:\\Dev\\HEARTISANS\\2016_05_20-09_48_17_ECG2000.csv";ppg = 0;
+	char* payload;
 
 	FILE *f = fopen(filename, "r");
 	if (f){
@@ -126,13 +131,31 @@ int main(){
 			// value
 			if (ppg){
 				printf ("ON PPG MODE\n");
+				char bkslash;
+				int d, m, y, h, mi, ms;
+			    int s;
+			    char h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12; // trying to read sensor data
+			    sscanf(rowstr, "%c %d-%d-%d%d:%d:%d.%d %c %c,%c,%c,%c,%c,%c,%c,%c,%c,%c,%c,%c",&bkslash, &y, &m, &d, &h, &mi, &s, &ms, &bkslash,
+			    		&h1,&h2,&h3,&h4,&h5,&h6,&h7,&h8,&h9,&h10,&h11,&h12);
+
+				printf ("%s",h1);
+				printf ("%s",h2);
+				printf ("%s",h3);
+				printf ("%s",h4);
+
+				//char* token = strsep(&rowstr, ",");
+//				payload = strtok(NULL,",");
+//				payload = strtok(NULL,",");
+//				payload = strtok(NULL,",");
+//				payload = strtok(NULL,",");
+				//parserPayload(rowstr);
 			}else{
 				char* value = strtok(NULL, ",");
 				printf ("%s",value);
 			}
 
 			// extract real data
-			dateParse(timestamp);
+			dataParse(timestamp);
 
 			printf("\n");
 
