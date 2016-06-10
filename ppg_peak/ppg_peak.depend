@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1465536376 source:c:\dev\src\ppg_peak\main.c
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<errno.h>
+	<time.h>
+	<assert.h>
+
